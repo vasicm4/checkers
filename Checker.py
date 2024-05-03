@@ -2,10 +2,19 @@ from Square import *
 from Constants import *
 
 class Checker:
-    def __init__(self, square: Square) -> None:
+    def __init__(self, square: Square, color) -> None:
         self._square = square
+        self._color = color
         self._is_queen = False
         self._is_eaten = False
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, color):
+        self._color = color
 
     @property
     def is_eaten(self) -> bool:
