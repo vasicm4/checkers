@@ -13,9 +13,10 @@ class Main:
         pygame.display.set_caption("Checkers")
         self.clock = pygame.time.Clock()  # controling framerate
         self.gameStateManager = GameStateManager("start")
-        self.menu = Menu(self.screen, self.gameStateManager)
-        self.board = Board(self.screen, self.gameStateManager)
-        self.pause = Pause(self.screen, self.gameStateManager)
+        self.game = Game.Game()
+        self.menu = Menu(self.screen, self.gameStateManager, self.game)
+        self.board = Board(self.screen, self.gameStateManager, self.game)
+        self.pause = Pause(self.screen, self.gameStateManager, self.game)
         self.states = {"start": self.menu, "board": self.board, "pause": self.pause}
 
     def run(self):
@@ -30,11 +31,14 @@ class Main:
                         self.gameStateManager.set_state("pause")
                     elif event.key == pygame.K_ESCAPE and self.gameStateManager.get_state() == "pause":
                         self.gameStateManager.set_state("board")
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        pos = pygame.mouse.get_pos()
             if state == "board":
                 self.gameStateManager.set_state("board")
             elif state == "start":
                 self.gameStateManager.set_state("start")
-                self.board = Board(self.screen, self.gameStateManager)
+                self.board = Board(self.screen, self.gameStateManager, self.game)
             elif state == "pause":
                 self.gameStateManager.set_state("pause")
             pygame.display.update()
@@ -83,7 +87,7 @@ class Button:
 
 #class main menu
 class Menu:
-    def __init__(self, display, gameStateManager):
+    def __init__(self, display, gameStateManager, game):
         self.display = display
         self.gameStateManager = gameStateManager
         self.welcome = pygame.font.Font("Jersey_25" + os.path.sep + "Jersey25-Regular.ttf", size=150).render("WELCOME", True,
@@ -92,56 +96,36 @@ class Menu:
                                                                                                         True, (0, 0, 0))
 
         self.forcejump = Button(75, "YES", (0, 0, 0), 300, 500)
-        self.regular = Button(75, "NO", (0, 0, 0), 500, 500)
+        self.regular = Button(75, "NO", (255, 0, 0), 500, 500)
         self.start = Button(100, "START", (0, 0, 0), 400, 650)
+        self.game = game
     def run(self):
-
-        # starting menu
-        mode = None
         self.display.fill((2, 122, 4))
         self.display.blit(self.welcome, self.welcome.get_rect(center=self.display.get_rect().center, top=150))
         self.display.blit(self.gamemode, self.gamemode.get_rect(center=self.display.get_rect().center, top=400))
         if self.forcejump.draw(self.display):
-            mode = True
+            self.game._force_jump = True
             self.forcejump.color = (255, 0, 0)
             self.forcejump.draw(self.display)
             self.regular.color = (0, 0, 0)
             self.forcejump.draw(self.display)
         if self.regular.draw(self.display):
-            mode = False
+            self.game._force_jump = False
             self.forcejump.color = (0,0,0)
             self.forcejump.draw(self.display)
             self.regular.color = (255, 0, 0)
             self.regular.draw(self.display)
         if self.start.draw(self.display):
-            game = Game.Game(mode)
             self.start.color = (0, 0, 0)
             self.regular.color = (0, 0, 0)
             self.forcejump.color = (0, 0, 0)
             return "board"
 
-class Board:
-    def __init__(self, display, gameStateManager):
-        self.display = display
-        self.gameStateManager = gameStateManager
-
-    def run(self):
-        board = pygame.Surface((WIDTH, HEIGHT))
-        board.fill((181, 136, 99))
-        for x in range(0, 8, 1):
-            if x % 2 == 0:
-                for y in range(0, 8, 2):
-                    pygame.draw.rect(board, (240, 217, 181), (x * CELL, y * CELL, CELL, CELL))
-            else:
-                for y in range(1, 8, 2):
-                    pygame.draw.rect(board, (240, 217, 181), (x * CELL, y * CELL, CELL, CELL))
-        self.display.blit(board, (0, 0))
-
-
 class Pause:
-    def __init__(self, display, gameStateManager):
+    def __init__(self, display, gameStateManager, game):
         self.display = display
         self.gameStateManager = gameStateManager
+        self.game = game
 
     def run(self):
         self.display.fill((2, 122, 4))
@@ -151,6 +135,29 @@ class Pause:
             return "board"
         if return_menu.draw(self.display):
             return "start"
+
+
+class Board:
+    def __init__(self, display, gameStateManager, game):
+        self.display = display
+        self.gameStateManager = gameStateManager
+        self.game = game
+
+    def run(self):
+        board = pygame.Surface((WIDTH, HEIGHT))
+        board.fill((181, 136, 99))
+        self.game.squares_fill()
+        for rank in self.game._squares.keys():
+            for file in self.game._squares[rank].keys():
+                self.game._squares[rank][file].draw(board)
+        # for x in range(0, 8, 1):
+        #     if x % 2 == 0:
+        #         for y in range(0, 8, 2):
+        #             pygame.draw.rect(board, (240, 217, 181), (x * CELL, y * CELL, CELL, CELL))
+        #     else:
+        #         for y in range(1, 8, 2):
+        #             pygame.draw.rect(board, (240, 217, 181), (x * CELL, y * CELL, CELL, CELL))
+        self.display.blit(board, (0, 0))
 
 
 if __name__ == '__main__':

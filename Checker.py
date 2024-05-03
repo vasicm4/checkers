@@ -5,8 +5,14 @@ class Checker:
     def __init__(self, square: Square, color) -> None:
         self._square = square
         self._color = color
-        self._is_queen = False
-        self._is_eaten = False
+        self._queen = False
+        self._eaten = False
+
+    def draw(self, display) -> None:
+        radius = CELL // 2 - PADDING
+        pygame.draw.circle(display, self.color, (self.square.x, self.square.y), radius)
+        if self.is_queen:
+            pygame.draw.circle(display, (0, 0, 0), (self.square.x, self.square.y),  radius+BORDER)
 
     @property
     def color(self):
@@ -18,10 +24,10 @@ class Checker:
 
     @property
     def is_eaten(self) -> bool:
-        return self._is_eaten
+        return self._eaten
 
     def eat(self) -> None:
-        self._is_eaten = True
+        self._eaten = True
 
     @property
     def square(self) -> Square:
@@ -33,8 +39,8 @@ class Checker:
 
     @property
     def is_queen(self) -> bool:
-        return self._is_queen
+        return self._queen
 
     @is_queen.setter
-    def is_queen(self, is_queen: bool) -> None:
-        self._is_queen = is_queen
+    def is_queen(self, queen: bool) -> None:
+        self._queen = queen

@@ -1,12 +1,17 @@
 from Constants import *
-
-
+import pygame
 class Square:
     def __init__(self, file: str, rank: int) -> None:
         self._file = file
         self._rank = rank
-        # self._square = (size,size)
         self._color = (240, 217, 181)
+
+    def calculate_position(self):
+        self._x = (ord(self.file) - ord('a')) * CELL + CELL // 2
+        self._y = (self.rank - 1) * CELL + CELL // 2
+
+    def draw(self, board):
+        pygame.draw.rect(board, (240, 217, 181), ((ord(self._file) - ord('a')) * CELL, (self._rank - 1) * CELL, CELL, CELL))
 
     def __str__(self) -> str:
         return "Field: " + self.file + str(self.rank)
@@ -18,6 +23,22 @@ class Square:
         return iter([self.file, self.rank])
 
 #implement find square method
+
+    @property
+    def x(self) -> int:
+        return self._x
+
+    @property
+    def y(self) -> int:
+        return self._y
+
+    @x.setter
+    def x(self, x: int) -> None:
+        self._x = x
+
+    @y.setter
+    def y(self, y: int) -> None:
+        self._y = y
 
     @property
     def file(self) -> str:

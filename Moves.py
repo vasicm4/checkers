@@ -1,33 +1,38 @@
 from Constants import *
 from Checker import Checker
 class Moves:
-    def move_left_up(self, Checker: Checker) -> None:
-        if Checker == 'a' or Checker.rank == 1:
+    def __init__(self):
+        self._red_checkers = []
+        self._black_chekers = []
+
+    def get_red_checkers(self) -> list:
+        return self._red_checkers
+
+    def get_black_checkers(self) -> list:
+        return self._black_chekers
+
+    def move_left_up(self, checker: Checker) -> None:
+        if checker.square.file == 'a' or checker.square.rank == 1:
             return
-        Checker.file = chr(ord(Checker.file) - 1)
-        self.square.rank -= 1
+        checker.square.file = chr(ord(checker.square.file) - 1)
+        checker.square.rank -= 1
 
 
-    def move_left_down(self) -> None:
-        if self.square.file == 'a' or self.square.rank == 1:
+    def move_left_down(self, checker: Checker) -> None:
+        if checker.square.file == 'a' or checker.square.rank == 8:
             return
-        self.square.file = chr(ord(self.square.file) - 1)
-        self.square.rank -= 1
+        checker.square.file = chr(ord(checker.square.file) - 1)
+        checker.square.rank += 1
 
-
-    def move_right_up(self) -> None:
-        if self.square.file == 'h' or self.square.rank == 8:
+    def move_right_up(self, checker: Checker) -> None:
+        if checker.square.file == 'h' or checker.square.rank == 8:
             return
-        self.square.file = chr(ord(self.square.file) + 1)
-        self.square.rank += 1
+        checker.square.file = chr(ord(checker.square.file) + 1)
+        checker.square.rank += 1
 
-
-    def move_right_down(self) -> None:
-        if self.square.file == 'h' or self.square.rank == 8:
+    def move_right_down(self, checker: Checker) -> None:
+        if checker.square.file == 'h' or checker.square.rank == 1:
             return
-        self.square.file = chr(ord(self.square.file) + 1)
-        self.square.rank += 1
+        checker.square.file = chr(ord(checker.square.file) + 1)
+        checker.square.rank -= 1
 
-
-    def moves_available(self) -> list:
-        moves = []
