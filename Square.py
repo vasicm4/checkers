@@ -13,7 +13,6 @@ class Square:
     def draw(self, board):
         pygame.draw.rect(board, (181, 136, 99), ((self._rank - 1) * CELL,(ord(self._file) - ord('a')) * CELL,  CELL, CELL))
 
-
     def __str__(self) -> str:
         return "Field: " + self.file + str(self.rank)
 
@@ -61,6 +60,3 @@ class Square:
     def rank(self, rank):
         self.rank = rank
 
-    @square.setter
-    def square(self, size):
-        self.square = (size, size)

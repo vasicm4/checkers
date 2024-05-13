@@ -103,21 +103,22 @@ class Menu:
         self.display.fill((2, 122, 4))
         self.display.blit(self.welcome, self.welcome.get_rect(center=self.display.get_rect().center, top=150))
         self.display.blit(self.gamemode, self.gamemode.get_rect(center=self.display.get_rect().center, top=400))
-        if self.forcejump.draw(self.display):
-            self.game._force_jump = True
+        #checks if the button is clicked
+        if self.forcejump.draw(self.display): #changes gamemode to forcejump
             self.forcejump.color = (255, 0, 0)
-            self.forcejump.draw(self.display)
             self.regular.color = (0, 0, 0)
             self.forcejump.draw(self.display)
-        if self.regular.draw(self.display):
-            self.game._force_jump = False
+        if self.regular.draw(self.display): #changes gammemode to regular
             self.forcejump.color = (0,0,0)
-            self.forcejump.draw(self.display)
             self.regular.color = (255, 0, 0)
             self.regular.draw(self.display)
-        if self.start.draw(self.display):
+        if self.start.draw(self.display): #starts the game with parameters set by the buttons
+            if self.forcejump.color == (255, 0, 0) and self.regular.color == (0,0,0):
+                self.game._game_mode = "FORCEJUMP"
+            elif self.forcejump.color == (0, 0, 0) and self.regular.color == (255,0,0):
+                self.game._game_mode = "REGULAR"
             self.start.color = (0, 0, 0)
-            self.regular.color = (0, 0, 0)
+            self.regular.color = (255, 0, 0)
             self.forcejump.color = (0, 0, 0)
             return "board"
 
