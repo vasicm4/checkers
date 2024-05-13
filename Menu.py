@@ -143,20 +143,20 @@ class Board:
         self.gameStateManager = gameStateManager
         self.game = game
 
+
     def run(self):
         board = pygame.Surface((WIDTH, HEIGHT))
-        board.fill((181, 136, 99))
+        board.fill((240, 217, 181))
         self.game.squares_fill()
         for rank in self.game._squares.keys():
             for file in self.game._squares[rank].keys():
                 self.game._squares[rank][file].draw(board)
-        # for x in range(0, 8, 1):
-        #     if x % 2 == 0:
-        #         for y in range(0, 8, 2):
-        #             pygame.draw.rect(board, (240, 217, 181), (x * CELL, y * CELL, CELL, CELL))
-        #     else:
-        #         for y in range(1, 8, 2):
-        #             pygame.draw.rect(board, (240, 217, 181), (x * CELL, y * CELL, CELL, CELL))
+        self.game.checkers_fill()
+        for dict in self.game._checkers.values():
+            for checker in dict.values():
+                if not checker.is_eaten:
+                    checker.draw(board)
+
         self.display.blit(board, (0, 0))
 
 

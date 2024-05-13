@@ -1,5 +1,3 @@
-from enum import Enum
-
 WIDTH = 800
 HEIGHT = WIDTH
 CELL = WIDTH//8

@@ -7,12 +7,34 @@ class Checker:
         self._color = color
         self._queen = False
         self._eaten = False
+        self._side = True if color == "RED" else False
+        self.clicked = False
 
     def draw(self, display) -> None:
         radius = CELL // 2 - PADDING
-        pygame.draw.circle(display, self.color, (self.square.x, self.square.y), radius)
-        if self.is_queen:
-            pygame.draw.circle(display, (0, 0, 0), (self.square.x, self.square.y),  radius+BORDER)
+        pygame.draw.circle(display, self.color, ((ord(self._square._file) - ord('a')) * CELL + CELL // 2, (self._square._rank - 1) * CELL + CELL // 2) , radius)
+
+    def is_clicked(self) -> bool:
+        rect = pygame.Rect((ord(self._square._file) - ord('a')) * CELL, (self._square._rank - 1) * CELL, CELL, CELL)
+        action = False
+        pos = pygame.mouse.get_pos()
+        if rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+                self.clicked = True
+                action = True
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.clicked = False
+        return action
+
+    def promote(self) -> None:
+        if self.square.rank == 8 and self._side:
+            self._queen = True
+        elif self.square.rank ==1 and not self._side:
+            self._queen = True
+
+    def move(self, square: Square) -> None:
+        self.square = square
+        self.promote()
 
     @property
     def color(self):
