@@ -1,38 +1,44 @@
-from Constants import *
-from Checker import Checker
+import Game
+import Square
+
 class Moves:
     def __init__(self):
-        self._red_checkers = []
-        self._black_chekers = []
+        self._player = {}
+        self._computer = {}
 
-    def get_red_checkers(self) -> list:
-        return self._red_checkers
+    @property
+    def computer(self):
+        return self._computer
 
-    def get_black_checkers(self) -> list:
-        return self._black_chekers
+    @computer.setter
+    def computer(self, computer):
+        self._computer = computer
 
-    def move_left_up(self, checker: Checker) -> None:
-        if checker.square.file == 'a' or checker.square.rank == 1:
+    @property
+    def player(self):
+        return self._player
+
+    @player.setter
+    def player(self, player):
+        self._player = player
+
+    def left_move_plus(self,game:Game, square:Square):
+        if square.file == 'a' or square.rank == 8:
             return
-        checker.square.file = chr(ord(checker.square.file) - 1)
-        checker.square.rank -= 1
+        return game.get_square(square.rank + 1, chr(ord(square.file) - 1))
 
-
-    def move_left_down(self, checker: Checker) -> None:
-        if checker.square.file == 'a' or checker.square.rank == 8:
+    def left_move_minus(self,game:Game,  square:Square):
+        if square.file == 'a' or square.rank == 1:
             return
-        checker.square.file = chr(ord(checker.square.file) - 1)
-        checker.square.rank += 1
+        return game.get_square(square.rank - 1, chr(ord(square.file) - 1))
 
-    def move_right_up(self, checker: Checker) -> None:
-        if checker.square.file == 'h' or checker.square.rank == 8:
+    def right_move_plus(self,game:Game,  square:Square):
+        if square.file == 'h' or square.rank == 8:
             return
-        checker.square.file = chr(ord(checker.square.file) + 1)
-        checker.square.rank += 1
+        return game.get_square(square.rank + 1, chr(ord(square.file) + 1))
 
-    def move_right_down(self, checker: Checker) -> None:
-        if checker.square.file == 'h' or checker.square.rank == 1:
+    def right_move_minus(self,game:Game,  square:Square):
+        if square.file == 'h' or square.rank == 1:
             return
-        checker.square.file = chr(ord(checker.square.file) + 1)
-        checker.square.rank -= 1
+        return game.get_square(square.rank - 1, chr(ord(square.file) + 1))
 

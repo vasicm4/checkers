@@ -3,7 +3,7 @@ import os.path
 import pygame
 from Constants import *
 import Game
-
+import Moves
 
 #initialization of the game
 class Main:
@@ -143,21 +143,63 @@ class Board:
         self.display = display
         self.gameStateManager = gameStateManager
         self.game = game
+        self.moves = Moves.Moves()
+        self.available = []
+        self.checker = None
 
-
-    def run(self):
+    def generate_board(self):
         board = pygame.Surface((WIDTH, HEIGHT))
         board.fill((240, 217, 181))
-        self.game.squares_fill()
         for rank in self.game._squares.keys():
             for file in self.game._squares[rank].keys():
                 self.game._squares[rank][file].draw(board)
-        self.game.checkers_fill()
+        return board
+    def get_pos(self, pos):
+        x, y = pos
+        file = FILES[x // CELL]
+        rank = 8 - y // CELL
+        return rank, file
+
+    def run(self):
+        board = self.generate_board()
         for dict in self.game._checkers.values():
             for checker in dict.values():
-                if not checker.is_eaten:
-                    checker.draw(board)
-
+                if checker != None:
+                    if not checker.is_eaten:
+                        checker.draw(board)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    pos = pygame.mouse.get_pos()
+                    rank, file = self.get_pos(pos)
+                    if file in self.game._squares[rank] and self.checker != None:
+                        square = self.game._squares[rank][file]
+                        if square in self.available:
+                            self.game.move_checker(self.checker, square)
+                            self.checker.moves_reset(self.available)
+                            self.available = []
+                            self.checker = None
+                            pass
+                    if file in self.game._checkers[rank]:
+                        checker = self.game._checkers[rank][file]
+                        if self.checker != None and self.checker != checker:
+                            self.checker.chosen = False
+                            self.checker.moves_reset(self.available)
+                            self.available = []
+                            self.checker = checker
+                        elif self.checker == None:
+                            self.checker = checker
+                        if not checker.chosen:
+                            self.checker = checker
+                            checker.chosen = True
+                            self.available = checker.moves_available(self.moves, self.game)
+                        else:
+                            checker.chosen = False
+                            checker.moves_reset(self.available)
+                            self.available = []
         self.display.blit(board, (0, 0))
 
 

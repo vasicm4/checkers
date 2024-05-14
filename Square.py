@@ -4,14 +4,15 @@ class Square:
     def __init__(self, file: str, rank: int) -> None:
         self._file = file
         self._rank = rank
-        self._color = (240, 217, 181)
+        self._color = (181, 136, 99)
+
 
     def calculate_position(self):
         self.x = (ord(self.file) - ord('a')) * CELL + CELL // 2
         self.y = (self.rank - 1) * CELL + CELL // 2
 
     def draw(self, board):
-        pygame.draw.rect(board, (181, 136, 99), ((self._rank - 1) * CELL,(ord(self._file) - ord('a')) * CELL,  CELL, CELL))
+        pygame.draw.rect(board, self._color, ((ord(self._file) - ord('a')) * CELL, (8 - self._rank) * CELL,  CELL, CELL))
 
     def __str__(self) -> str:
         return "Field: " + self.file + str(self.rank)
@@ -42,21 +43,24 @@ class Square:
 
     @property
     def file(self) -> str:
-        return self.file
+        return self._file
 
     @property
     def rank(self) -> int:
-        return self.rank
+        return self._rank
 
     @property
-    def square(self) -> tuple:
-        return self.square
+    def square(self):
+        return self
 
-    @file.setter
-    def file(self, file):
-        self.file = file
+    def color_getter(self):
+        return self._color
 
-    @rank.setter
-    def rank(self, rank):
-        self.rank = rank
+    @square.setter
+    def square(self,square):
+        self.square = square
+
+    def color_setter(self,color):
+        self._color = color
+
 
