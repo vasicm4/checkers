@@ -185,25 +185,27 @@ class Board:
                             continue
                     if file in self.game._checkers[rank]:
                         checker = self.game._checkers[rank][file]
+                        if checker == None:
+                            continue
                         if checker.color == (255, 0, 0):
                             if self.checker != None and self.checker != checker:
                                 self.checker.chosen = False
                                 self.checker.moves_reset(self.available)
                                 self.available = []
-                                for element in self.available:
-                                    if self.game.checker_in_square(element):
-                                        self.available.remove(element)
                                 self.checker = checker
-                            elif self.checker == None:
-                                self.checker = checker
+                            # elif self.checker == None:
+                            #     self.checker = checker
                             if not checker.chosen:
                                 self.checker = checker
                                 checker.chosen = True
                                 self.available = checker.moves_available(self.moves, self.game)
+                            if len(self.available) == 0:
+                                self.checker.chosen = False
+                                self.checker = None
                         elif checker.color == (255,255,0):
-                                checker.chosen = False
-                                checker.moves_reset(self.available)
-                                self.available = []
+                            checker.chosen = False
+                            checker.moves_reset(self.available)
+                            self.available = []
         self.display.blit(board, (0, 0))
 
 

@@ -32,8 +32,14 @@ class Checker:
             available.append(moves.left_move_plus(game, self._square))
         if moves.right_move_plus(game, self._square):
             available.append(moves.right_move_plus(game, self._square))
+        pos = []
         for element in available:
-            element.color_setter((255, 255, 0))
+            if not game.checker_in_square(element):
+                element.color_setter((255, 255, 0))
+            else:
+                pos.append(element)
+        for el in pos:
+            available.remove(el)
         return available
 
     def moves_reset(self, moves) -> None:

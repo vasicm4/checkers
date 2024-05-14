@@ -37,8 +37,9 @@ class Game:
         self._checkers[square.rank][square.file] = checker
 
     def checker_in_square(self,square: Square) -> bool:
-        if self._squares[square.rank][square.rank]:
-            return True
+        if square.file in self._checkers[square.rank]:
+            if self._checkers[square.rank][square.file]:
+                return True
         return False
 
     def get_square(self, rank: int, file: str) -> Square:
