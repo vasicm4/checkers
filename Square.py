@@ -15,7 +15,7 @@ class Square:
         pygame.draw.rect(board, self._color, ((ord(self._file) - ord('a')) * CELL, (8 - self._rank) * CELL,  CELL, CELL))
 
     def __str__(self) -> str:
-        return "Field: " + self.file + str(self.rank)
+        return str(self.rank) + str(self.file)
 
     def __eq__(self, other) -> bool:
         return self.file == other.file and self.rank == other.rank

@@ -33,13 +33,35 @@ class Checker:
         if moves.right_move_plus(game, self._square):
             available.append(moves.right_move_plus(game, self._square))
         pos = []
-        for element in available:
-            if not game.checker_in_square(element):
-                element.color_setter((255, 255, 0))
+        eat = []
+        for square in available:
+            if not game.checker_in_square(square):
+                square.color_setter((255, 255, 0))
             else:
-                pos.append(element)
+                if self.is_queen:
+                    if moves.right_move_minus(game, square):
+                        if game.checker_in_square(moves.left_move_plus(game,square)):
+                            pos.append(square)
+                        else:
+                            eat.append(square)
+                    if moves.left_move_minus(game,square):
+                        if game.checker_in_square(moves.left_move_minus(game,square)):
+                            pos.append(square)
+                        else:
+                            eat.append(square)
+                if moves.left_move_plus(game, square):
+                    if game.checker_in_square(moves.left_move_plus(game, square)):
+                        pos.append(square)
+                    else:
+                        eat.append(square)
+                if moves.right_move_plus(game,square):
+                    if game.checker_in_square(moves.right_move_plus(game,square)):
+                        pos.append(square)
+                    else:
+                        eat.append(square)
         for el in pos:
             available.remove(el)
+        available += eat
         return available
 
     def moves_reset(self, moves) -> None:
@@ -58,7 +80,12 @@ class Checker:
     @chosen.setter
     def chosen(self, chosen: bool) -> None:
         self._chosen = chosen
-        self._color = (255,255,0) if chosen else (255,0,0)
+        if self._chosen:
+            self._color = (255,255,0)
+        elif self.is_queen:
+            self._color = (150,75,0)
+        else:
+            self._color = (255,0,0)
 
     @property
     def color(self):
@@ -90,3 +117,4 @@ class Checker:
     @is_queen.setter
     def is_queen(self, queen: bool) -> None:
         self._queen = queen
+        self._color = (150,75,0)
