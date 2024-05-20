@@ -1,12 +1,14 @@
 class Node:
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, start, end, evaluation):
+        self.start = start
+        self.end = end
+        self.evaluation = evaluation
         self.parent = None
         self.children = []
 
 class MovesTree:
-    def __init__(self,value):
-        self.root = Node(value)
+    def __init__(self):
+        self.root = None
         self.length = 0
 
     def __len__(self):
@@ -18,6 +20,16 @@ class MovesTree:
     @property
     def root(self):
         return self.root
+
+    def add_root(self, last_move, evaluation):
+        for key in last_move.keys():
+            for value in last_move.values():
+                Node(key, value, evaluation)
+
+    def add_node(self, node, start, end, evaluation):
+        new_node = Node(start, end, evaluation)
+        node.children.append(new_node)
+        new_node.parent = node
 
     def is_root(self, node):
         return node.parent
@@ -42,6 +54,25 @@ class MovesTree:
         for child in old.children:
             if child != None:
                 child.parent = new
+
+    def minimax(self, position, depth, alpha, beta, maxPC):
+        if depth == 0:
+            return node.evaluation
+        if maxPC:
+            maxEval = -10000000
+            for child in self.children():
+                pos = self.minimax(position, depth - 1, alpha, beta, False)
+                alpha = max(alpha, pos)
+                if beta <= alpha:
+                    break
+            return maxEval
+        else:
+            minEval = 10000000
+            for child in self.children():
+                eval = self.minimax(position, depth - 1, alpha, beta, True)
+                minEval = min(minEval, eval)
+                beta = min(beta, eval)
+            return minEval
 
     def depth(self, node):
         pass

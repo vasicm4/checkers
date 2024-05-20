@@ -4,7 +4,6 @@ from Checker import Checker
 class Game:
     def __init__(self, forcejump: bool = False) -> None:
         self._force_jump = forcejump
-        self._over = False
         self._squares = {}
         self._checkers = {}
         self.squares_fill()
@@ -32,11 +31,14 @@ class Game:
                         self._checkers[rank][file] = Checker(self._squares[rank][file], True)
                     elif rank > 5:
                         self._checkers[rank][file] = Checker(self._squares[rank][file], False)
+                    else:
+                        self._checkers[rank][file] = None
 
     def move_checker(self, checker, square):
         self._checkers[checker.square.rank][checker.square.file] = None
-        checker.move(square)
+        boolean = checker.move(square, self)
         self._checkers[square.rank][square.file] = checker
+        return boolean
 
     def reset(self):
         self._over = False
@@ -45,20 +47,18 @@ class Game:
         self._turn = True
         self._end = False
 
-
     def checker_in_square(self,square: Square) -> bool:
+        if type(square) == None:
+            return False
         if square.file in self._checkers[square.rank]:
             if self._checkers[square.rank][square.file]:
-                return True
+                return self._checkers[square.rank][square.file]
         return False
-
-
 
     def get_square(self, rank: int, file: str) -> Square:
         return self._squares[rank][file]
 
-
-    def get_checker(self, file: str, rank: int) -> Checker:
+    def get_checker(self, rank: int, file: str,) -> Checker:
         return self._checkers[rank][file]
 
     def get_game_mode(self) -> str:

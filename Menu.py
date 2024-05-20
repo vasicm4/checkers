@@ -164,13 +164,19 @@ class Board:
 
     def run(self):
         board = self.generate_board()
-        if self.game.end():
-            return "end"
         for dict in self.game._checkers.values():
             for checker in dict.values():
                 if checker != None:
                     if not checker.is_eaten:
                         checker.draw(board)
+        self.moves.player_moves = {}
+        self.moves.computer_moves = {}
+        self.moves.load_player_moves(self.game)
+        self.moves.load_computer_moves(self.game)
+        if self.moves.player_moves == {} or self.moves.computer_moves == {}:
+            self.game._end = True
+        if self.game._end:
+            self.gameStateManager.set_state("start")
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE and self.gameStateManager.get_state() == "board":
@@ -178,9 +184,13 @@ class Board:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+
             if not self.game.turn:
-                continue
-                #calls find move function
+                for square in self.moves.computer_moves.keys():
+                    self.game.get_square(int(square[0]), square[1]).color_setter("white")
+            else:
+                for square in self.moves.player_moves.keys():
+                    self.game.get_square(int(square[0]), square[1]).color_setter("white")
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
@@ -188,19 +198,27 @@ class Board:
                     if file in self.game._squares[rank] and self.checker != None:
                         square = self.game._squares[rank][file]
                         if square in self.available:
+                            for move in self.moves.player_moves.keys():
+                                self.game.get_square(int(move[0]), move[1]).color_setter((181, 136, 99))
+                            for move in self.moves.computer_moves.keys():
+                                self.game.get_square(int(move[0]), move[1]).color_setter((181, 136, 99))
                             self.moves.last_move_setter(self.game,self.checker.square, square)
-                            self.game.move_checker(self.checker, square)
+                            if self.game.move_checker(self.checker, square):
+                                self.game.turn = True
                             self.available.remove(square)
                             self.checker.moves_reset(self.available)
                             self.available = []
                             self.checker = None
-                            self.game.turn = False
+                            if self.game.turn:
+                                self.game.turn = False
+                            else:
+                                self.game.turn = True
                             continue
                     if file in self.game._checkers[rank]:
                         checker = self.game._checkers[rank][file]
                         if checker == None:
                             continue
-                        if checker.color == (255, 0, 0) or checker._color == (150,75,0):
+                        if checker._side == self.game.turn:
                             if self.checker != None and self.checker != checker:
                                 self.checker.chosen = False
                                 self.checker.moves_reset(self.available)
@@ -209,7 +227,20 @@ class Board:
                             if not checker.chosen:
                                 self.checker = checker
                                 checker.chosen = True
-                                self.available = checker.moves_available(self.moves, self.game)
+                                if self.game.turn:
+                                    try:
+                                        for square in  self.moves.player_moves[str(self.checker.square)].values():
+                                            self.available.append(square)
+                                            square.color_setter((255,255,0))
+                                    except KeyError:
+                                        pass
+                                else:
+                                    try:
+                                        for square in self.moves.computer_moves[str(self.checker.square)].values():
+                                            self.available.append(square)
+                                            square.color_setter((255,255,0))
+                                    except KeyError:
+                                        pass
                             if len(self.available) == 0:
                                 self.checker.chosen = False
                                 self.checker = None

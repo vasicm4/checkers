@@ -21,57 +21,89 @@ class Checker:
         elif self.square.rank == 1 and not self._side:
             self._queen = True
 
-    def moves_available(self, moves, game) -> list[Square]:
+    def all_moves_available(self, moves, game):
         available = []
-        if self.is_queen:
+        if self.is_queen or not self._side:
             if moves.right_move_minus(game,self._square):
-                available.append(moves.right_move_minus(game,self._square))
+                checker = game.checker_in_square(moves.right_move_minus(game,self._square))
+                if checker:
+                    if checker._side == self._side:
+                        pass
+                    else:
+                        if moves.right_move_minus(game,checker._square):
+                            if game.checker_in_square(moves.right_move_minus(game,checker._square)):
+                                pass
+                            else:
+                                available.append(moves.right_move_minus(game,checker._square))
+                else:
+                    available.append(moves.right_move_minus(game,self._square))
             if moves.left_move_minus(game, self._square):
-                available.append(moves.left_move_minus(game, self._square))
-        if moves.left_move_plus(game, self._square):
-            available.append(moves.left_move_plus(game, self._square))
-        if moves.right_move_plus(game, self._square):
-            available.append(moves.right_move_plus(game, self._square))
-        pos = []
-        eat = []
-        for square in available:
-            if not game.checker_in_square(square):
-                square.color_setter((255, 255, 0))
-            else:
-                if self.is_queen:
-                    if moves.right_move_minus(game, square):
-                        if game.checker_in_square(moves.left_move_plus(game,square)):
-                            pos.append(square)
-                        else:
-                            eat.append(square)
-                    if moves.left_move_minus(game,square):
-                        if game.checker_in_square(moves.left_move_minus(game,square)):
-                            pos.append(square)
-                        else:
-                            eat.append(square)
-                if moves.left_move_plus(game, square):
-                    if game.checker_in_square(moves.left_move_plus(game, square)):
-                        pos.append(square)
+                checker = game.checker_in_square(moves.left_move_minus(game, self._square))
+                if checker:
+                    if checker._side == self._side:
+                        pass
                     else:
-                        eat.append(square)
-                if moves.right_move_plus(game,square):
-                    if game.checker_in_square(moves.right_move_plus(game,square)):
-                        pos.append(square)
+                        if moves.left_move_minus(game, checker._square):
+                            if game.checker_in_square(moves.left_move_minus(game, checker._square)):
+                                pass
+                            else:
+                                available.append(moves.left_move_minus(game, checker._square))
+                else:
+                    available.append(moves.left_move_minus(game, self._square))
+        if self.is_queen or self._side:
+            if moves.left_move_plus(game, self._square):
+                checker = game.checker_in_square(moves.left_move_plus(game, self._square))
+                if checker:
+                    if checker._side == self._side:
+                        pass
                     else:
-                        eat.append(square)
-        for el in pos:
-            available.remove(el)
-        available += eat
+                        if moves.left_move_plus(game, checker._square):
+                            if game.checker_in_square(moves.left_move_plus(game, checker._square)):
+                                pass
+                            else:
+                                available.append(moves.left_move_plus(game, checker._square))
+                else:
+                    available.append(moves.left_move_plus(game, self._square))
+            if moves.right_move_plus(game, self._square):
+                checker = game.checker_in_square(moves.right_move_plus(game, self._square))
+                if checker:
+                    if checker._side == self._side:
+                        pass
+                    else:
+                        if moves.right_move_plus(game, checker._square):
+                            if game.checker_in_square(moves.right_move_plus(game, checker._square)):
+                                pass
+                            else:
+                                available.append(moves.right_move_plus(game, checker._square))
+                else:
+                    available.append(moves.right_move_plus(game, self._square))
         return available
 
-    def moves_reset(self, moves) -> None:
-        for element in moves:
-            element.color_setter((181, 136, 99))
+    def moves_available(self, moves, game):
+        available = self.all_moves_available(moves, game)
+        for move in available:
+            move.color_setter((255,255,0))
+        return available
 
-    def move(self, square: Square) -> None:
+
+    def moves_reset(self, moves) -> None:
+        for square in moves:
+            square.color_setter((181, 136, 99))
+
+    def move(self, square: Square, game) -> bool:
+        if abs(square.rank - self.square.rank) == 2:
+            checker = game.get_checker((self.square.rank + square.rank) // 2, chr((ord(self.square.file) + ord(square.file)) // 2))
+            checker.eat()
+            game.get_checker((self.square.rank + square.rank) // 2, chr((ord(self.square.file) + ord(square.file)) // 2))
+            game._checkers[checker.square.rank][checker.square.file] = None
+            self.square = square
+            self.promote()
+            self.chosen = False
+            return True
         self.square = square
         self.promote()
         self.chosen = False
+        return False
 
     @property
     def chosen(self) -> bool:
@@ -82,10 +114,17 @@ class Checker:
         self._chosen = chosen
         if self._chosen:
             self._color = (255,255,0)
-        elif self.is_queen:
-            self._color = (150,75,0)
         else:
-            self._color = (255,0,0)
+            if self._side:
+                if self.is_queen:
+                    self._color = (150,75,0)
+                else:
+                    self._color = (255,0,0)
+            else:
+                if self.is_queen:
+                    self._color = (169,169,169)
+                else:
+                    self._color = (0,0,0)
 
     @property
     def color(self):

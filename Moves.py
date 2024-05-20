@@ -6,33 +6,59 @@ class Moves:
         self._player_moves = {}
         self._computer_moves = {}
         self._last_move = {}
-        self._player_state = 1000
-        self._computer_state = 1000
+        self._player_state = 0
+        self._computer_state = 0
 
-    def load_player_moves(self, checkers: dict) -> None:
-        pass
+    def load_player_moves(self, game: Game) -> None:
+        for rank in game._checkers.keys():
+            for file in game._checkers[rank].keys():
+                hashmap = {}
+                square = game.get_square(rank,file)
+                if game.get_checker(rank, file):
+                    if game.get_checker(rank, file)._eaten:
+                        continue
+                if game.checker_in_square(square):
+                    if game.checker_in_square(square)._side:
+                        all = game.checker_in_square(square).all_moves_available(self, game)
+                        for i in range(len(all)):
+                            hashmap.update({i+1 : all[i]})
+                        if len(all) != 0:
+                            self._player_moves.update({str(square):hashmap})
 
-    def load_computer_moves(self, checkers: dict) -> None:
-        pass
+    def load_computer_moves(self, game: Game) -> None:
+        for rank in game._checkers.keys():
+            for file in game._checkers[rank].keys():
+                hashmap = {}
+                square = game.get_square(rank,file)
+                if game.get_checker(rank, file):
+                    if game.get_checker(rank, file)._eaten:
+                        continue
+                if game.checker_in_square(square):
+                    if not game.checker_in_square(square)._side:
+                        all = game.checker_in_square(square).all_moves_available(self, game)
+                        for i in range(len(all)):
+                            hashmap.update({i + 1: all[i]})
+                        if len(all) != 0:
+                            self._computer_moves.update({str(square): hashmap})
 
     def left_move_plus(self,game:Game, square:Square):
         if square.file == 'a' or square.rank == 8:
-            return
+            return False
         return game.get_square(square.rank + 1, chr(ord(square.file) - 1))
 
     def left_move_minus(self,game:Game,  square:Square):
         if square.file == 'a' or square.rank == 1:
-            return
+            return False
         return game.get_square(square.rank - 1, chr(ord(square.file) - 1))
 
     def right_move_plus(self,game:Game,  square:Square):
         if square.file == 'h' or square.rank == 8:
-            return
+            return False
         return game.get_square(square.rank + 1, chr(ord(square.file) + 1))
 
     def right_move_minus(self,game:Game,  square:Square):
         if square.file == 'h' or square.rank == 1:
-            return
+            return False
         return game.get_square(square.rank - 1, chr(ord(square.file) + 1))
 
     @property
@@ -72,8 +98,8 @@ class Moves:
             game.get_square(int(string[0]), string[1]).color_setter((181, 136, 99))
             string = self._last_move[string]
             game.get_square(int(string[0]), string[1]).color_setter((181, 136, 99))
-        start.color_setter((255, 255, 0))
-        finish.color_setter((255, 255, 0))
+        start.color_setter((50,205,50))
+        finish.color_setter((34,139,34))
         self._last_move = {str(start):str(finish)}
 
 
@@ -92,3 +118,12 @@ class Moves:
     @player_state.setter
     def player_state(self,value):
         self._player_state = value
+
+
+    @player_moves.setter
+    def player_moves(self, value):
+        self._player_moves = value
+
+    @computer_moves.setter
+    def computer_moves(self, value):
+        self._computer_moves = value
