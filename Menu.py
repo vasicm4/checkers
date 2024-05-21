@@ -17,7 +17,9 @@ class Main:
         self.menu = Menu(self.screen, self.gameStateManager, self.game)
         self.board = Board(self.screen, self.gameStateManager, self.game)
         self.pause = Pause(self.screen, self.gameStateManager, self.game)
-        self.states = {"start": self.menu, "board": self.board, "pause": self.pause}
+        self.won = Won(self.screen, self.gameStateManager, self.game)
+        self.lost = Lost(self.screen, self.gameStateManager, self.game)
+        self.states = {"start": self.menu, "board": self.board, "pause": self.pause, "won": self.won, "lost": self.lost}
 
     def run(self):
         while True:
@@ -42,6 +44,10 @@ class Main:
                 self.board = Board(self.screen, self.gameStateManager, self.game)
             elif state == "pause":
                 self.gameStateManager.set_state("pause")
+            elif state == "won":
+                self.gameStateManager.set_state("won")
+            elif state == "lost":
+                self.gameStateManager.set_state("lost")
             pygame.display.update()
             self.clock.tick(FPS)
 
@@ -138,6 +144,35 @@ class Pause:
         if return_menu.draw(self.display):
             return "start"
 
+class Won:
+    def __init__(self, display, gameStateManager, game):
+        self.display = display
+        self.gameStateManager = gameStateManager
+        self.game = game
+
+    def run(self):
+        self.display.fill((2, 122, 4))
+        won = pygame.font.Font("Jersey_25" + os.path.sep + "Jersey25-Regular.ttf", size=150).render("YOU WON", True,
+                                                                                                        (255, 0, 0))
+        self.display.blit(won, won.get_rect(center=self.display.get_rect().center, top=150))
+        return_menu = Button(100, "RETURN TO MENU",(0, 0, 0), 400,500)
+        if return_menu.draw(self.display):
+            return "start"
+
+class Lost:
+    def __init__(self, display, gameStateManager, game):
+        self.display = display
+        self.gameStateManager = gameStateManager
+        self.game = game
+    def run(self):
+        self.display.fill((2, 122, 4))
+        won = pygame.font.Font("Jersey_25" + os.path.sep + "Jersey25-Regular.ttf", size=150).render("YOU LOST", True,
+                                                                                                        (255, 0, 0))
+        self.display.blit(won, won.get_rect(center=self.display.get_rect().center, top=150))
+        return_menu = Button(100, "RETURN TO MENU",(0, 0, 0), 400,500)
+        if return_menu.draw(self.display):
+            return "start"
+
 
 class Board:
     def __init__(self, display, gameStateManager, game):
@@ -175,8 +210,10 @@ class Board:
         self.moves.load_computer_moves(self.game)
         if self.moves.player_moves == {} or self.moves.computer_moves == {}:
             self.game._end = True
-        if self.game._end:
-            self.gameStateManager.set_state("start")
+        if self.game._end and self.moves.player_moves == {}:
+            return "won"
+        elif self.game._end and self.moves.computer_moves == {}:
+            return "lost"
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE and self.gameStateManager.get_state() == "board":
@@ -203,8 +240,7 @@ class Board:
                             for move in self.moves.computer_moves.keys():
                                 self.game.get_square(int(move[0]), move[1]).color_setter((181, 136, 99))
                             self.moves.last_move_setter(self.game,self.checker.square, square)
-                            if self.game.move_checker(self.checker, square):
-                                self.game.turn = True
+                            self.game.move_checker(self.checker, square)
                             self.available.remove(square)
                             self.checker.moves_reset(self.available)
                             self.available = []
@@ -229,7 +265,7 @@ class Board:
                                 checker.chosen = True
                                 if self.game.turn:
                                     try:
-                                        for square in  self.moves.player_moves[str(self.checker.square)].values():
+                                        for square in self.moves.player_moves[str(self.checker.square)].values():
                                             self.available.append(square)
                                             square.color_setter((255,255,0))
                                     except KeyError:

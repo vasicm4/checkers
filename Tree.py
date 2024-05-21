@@ -2,7 +2,6 @@ class Node:
     def __init__(self, start, end, evaluation):
         self.start = start
         self.end = end
-        self.evaluation = evaluation
         self.parent = None
         self.children = []
 

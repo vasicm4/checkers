@@ -1,13 +1,54 @@
 import Game
 import Square
+from Constants import *
 
 class Moves:
     def __init__(self):
         self._player_moves = {}
         self._computer_moves = {}
         self._last_move = {}
-        self._player_state = 0
-        self._computer_state = 0
+
+    def count_checkers(self, game: Game) -> tuple:
+        player_state = 0
+        computer_state = 0
+        for rank in game._checkers.keys():
+            for file in game._checkers[rank].keys():
+                if game.checker_in_square(game.get_square(rank,file)):
+                    if game.checker_in_square(game.get_square(rank,file))._side:
+                        player_state += BASIC_PIECE
+                        if game.checker_in_square(game.get_square(rank,file)).is_queen:
+                            player_state += QUEEN_WEIGHT
+                        if rank > 5:
+                            player_state += ADVANCED
+                        if (file == 'a' or file == 'h') and (rank == 1 or rank == 8):
+                            player_state += CORNER
+                        elif file == 'a' or file == 'h':
+                            player_state += WALL
+                    else:
+                        computer_state += BASIC_PIECE
+                        if game.checker_in_square(game.get_square(rank,file)).is_queen:
+                            computer_state += QUEEN_WEIGHT
+                        if rank < 4:
+                            computer_state += ADVANCED
+                        if (file == 'a' or file == 'h') and (rank == 1 or rank == 8):
+                            computer_state += CORNER
+                        elif file == 'a' or file == 'h':
+                            player_state += WALL
+        return player_state, computer_state
+    def evaluate(self, game: Game) -> int:
+        player_state, computer_state = self.count_checkers(game)
+        for square in self._computer_moves.keys():
+            for i in self._computer_moves[square].keys():
+                if abs(self._computer_moves[square][i].rank - self._computer_moves[square][i].rank) == 2:
+                    computer_state += ATTACK_WEIGHT
+                    player_state += CAN_BE_CAPTURED
+        for square in self._player_moves.keys():
+            for i in self._player_moves[square].keys():
+                if abs(self._player_moves[square][i].rank - self._player_moves[square][i].rank) == 2:
+                    player_state += ATTACK_WEIGHT
+                    player_state += CAN_BE_CAPTURED
+        return player_state - computer_state
+
 
     def load_player_moves(self, game: Game) -> None:
         for rank in game._checkers.keys():
@@ -24,6 +65,20 @@ class Moves:
                             hashmap.update({i+1 : all[i]})
                         if len(all) != 0:
                             self._player_moves.update({str(square):hashmap})
+        if game._game_mode == "FORCEJUMP":
+            to_eat = []
+            for start in self._player_moves.keys():
+                for i in self._player_moves[start].keys():
+                    if abs(int(start[0]) - self.player_moves[start][i].rank) == 2:
+                        to_eat.append({start:self._player_moves[start][i]})
+            if len(to_eat) != 0:
+                self._player_moves = {}
+                for hashmap in to_eat:
+                    for key in hashmap.keys():
+                        try:
+                            self._player_moves[key].update({key:{len(self._player_moves[key]) + 1:hashmap[key]}})
+                        except KeyError:
+                            self._player_moves.update({key:{1:hashmap[key]}})
 
     def load_computer_moves(self, game: Game) -> None:
         for rank in game._checkers.keys():
@@ -40,6 +95,21 @@ class Moves:
                             hashmap.update({i + 1: all[i]})
                         if len(all) != 0:
                             self._computer_moves.update({str(square): hashmap})
+
+        if game._game_mode == "FORCEJUMP":
+            to_eat = []
+            for start in self._computer_moves.keys():
+                for i in self._computer_moves[start].keys():
+                    if abs(int(start[0]) - self._computer_moves[start][i].rank) == 2:
+                        to_eat.append({start:self._computer_moves[start][i]})
+            if len(to_eat) != 0:
+                self._computer_moves = {}
+                for hashmap in to_eat:
+                    for key in hashmap.keys():
+                        try:
+                            self._computer_moves[key].update({key:{len(self._player_moves[key]) + 1:hashmap[key]}})
+                        except KeyError:
+                            self._computer_moves.update({key:{1:hashmap[key]}})
 
     def left_move_plus(self,game:Game, square:Square):
         if square.file == 'a' or square.rank == 8:
