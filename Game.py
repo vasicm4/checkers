@@ -7,7 +7,6 @@ class Game:
         self._squares = {}
         self._checkers = {}
         self.squares_fill()
-        self.checkers_fill()
         self._turn = True
         self._end = False
         if forcejump:
@@ -58,7 +57,7 @@ class Game:
     def get_square(self, rank: int, file: str) -> Square:
         return self._squares[rank][file]
 
-    def get_checker(self, rank: int, file: str,) -> Checker:
+    def get_checker(self, rank: int, file: str) -> Checker:
         return self._checkers[rank][file]
 
     def get_game_mode(self) -> str:

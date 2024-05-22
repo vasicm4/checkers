@@ -35,6 +35,8 @@ class Moves:
                         elif file == 'a' or file == 'h':
                             player_state += WALL
         return player_state, computer_state
+
+
     def evaluate(self, game: Game) -> int:
         player_state, computer_state = self.count_checkers(game)
         for square in self._computer_moves.keys():
@@ -47,7 +49,7 @@ class Moves:
                 if abs(self._player_moves[square][i].rank - self._player_moves[square][i].rank) == 2:
                     player_state += ATTACK_WEIGHT
                     player_state += CAN_BE_CAPTURED
-        return player_state - computer_state
+        return computer_state - player_state
 
 
     def load_player_moves(self, game: Game) -> None:
@@ -65,6 +67,8 @@ class Moves:
                             hashmap.update({i+1 : all[i]})
                         if len(all) != 0:
                             self._player_moves.update({str(square):hashmap})
+        if len(self._player_moves) == 0:
+            game._end = True
         if game._game_mode == "FORCEJUMP":
             to_eat = []
             for start in self._player_moves.keys():
@@ -95,7 +99,8 @@ class Moves:
                             hashmap.update({i + 1: all[i]})
                         if len(all) != 0:
                             self._computer_moves.update({str(square): hashmap})
-
+        if len(self._computer_moves) == 0:
+            game._end = True
         if game._game_mode == "FORCEJUMP":
             to_eat = []
             for start in self._computer_moves.keys():
@@ -171,6 +176,12 @@ class Moves:
         start.color_setter((50,205,50))
         finish.color_setter((34,139,34))
         self._last_move = {str(start):str(finish)}
+
+    def last_move_color(self, game):
+        for key in self._last_move:
+            game.get_square(int(key[0]), key[1]).color_setter((50,205,50))
+            game.get_square(int(self._last_move[key][0]), self._last_move[key][1]).color_setter((34,139,34))
+
 
 
     @computer.setter

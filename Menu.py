@@ -4,6 +4,8 @@ import pygame
 from Constants import *
 import Game
 import Moves
+import Tree
+import time
 
 #initialization of the game
 class Main:
@@ -179,8 +181,10 @@ class Board:
         self.display = display
         self.gameStateManager = gameStateManager
         self.game = game
+        self.game.checkers_fill()
         self.moves = Moves.Moves()
         self.available = []
+        self.tree = Tree.MovesTree()
         self.checker = None
 
     def generate_board(self):
@@ -204,16 +208,33 @@ class Board:
                 if checker != None:
                     if not checker.is_eaten:
                         checker.draw(board)
-        self.moves.player_moves = {}
-        self.moves.computer_moves = {}
-        self.moves.load_player_moves(self.game)
-        self.moves.load_computer_moves(self.game)
-        if self.moves.player_moves == {} or self.moves.computer_moves == {}:
-            self.game._end = True
-        if self.game._end and self.moves.player_moves == {}:
-            return "won"
-        elif self.game._end and self.moves.computer_moves == {}:
-            return "lost"
+
+        if self.game.turn:
+            self.moves._computer_moves = {}
+            self.moves.load_player_moves(self.game)
+        if not self.game.turn:
+            start_time = time.time()
+            self.tree = Tree.MovesTree()
+            self.tree.generate_tree(self.moves, self.game, 3)
+            evaluation, best_move = self.tree.minimax(3, float("inf"), float("-inf"), True)
+            self.game._turn = True
+            for square in best_move.keys():
+                checker = self.game.checker_in_square(self.game.get_square(int(square[0]), square[1]))
+                self.game.move_checker(checker, best_move[square])
+                self.moves.last_move_setter(self.game, self.game.get_square(int(square[0]), square[1]), best_move[square])
+            self.moves._computer_moves = {}
+            self.moves.load_player_moves(self.game)
+            end_time = time.time()
+            print(end_time - start_time)
+
+        # if self.moves.player_moves == {} and self.game.turn:
+        #     self.game._end = True
+        # if self.moves.computer_moves == {} and not self.game.turn:
+        #     self.game._end = True
+        # if self.game._end and self.moves.player_moves == {}:
+        #     return "won"
+        # elif self.game._end and self.moves.computer_moves == {}:
+        #     return "lost"
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE and self.gameStateManager.get_state() == "board":
@@ -221,13 +242,12 @@ class Board:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-
-            if not self.game.turn:
-                for square in self.moves.computer_moves.keys():
-                    self.game.get_square(int(square[0]), square[1]).color_setter("white")
-            else:
+            if self.game.turn:
                 for square in self.moves.player_moves.keys():
                     self.game.get_square(int(square[0]), square[1]).color_setter("white")
+            # else:
+            #     for square in self.moves.computer_moves.keys():
+            #         self.game.get_square(int(square[0]), square[1]).color_setter("white")
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
@@ -237,8 +257,8 @@ class Board:
                         if square in self.available:
                             for move in self.moves.player_moves.keys():
                                 self.game.get_square(int(move[0]), move[1]).color_setter((181, 136, 99))
-                            for move in self.moves.computer_moves.keys():
-                                self.game.get_square(int(move[0]), move[1]).color_setter((181, 136, 99))
+                            # for move in self.moves.computer_moves.keys():
+                            #     self.game.get_square(int(move[0]), move[1]).color_setter((181, 136, 99))
                             self.moves.last_move_setter(self.game,self.checker.square, square)
                             self.game.move_checker(self.checker, square)
                             self.available.remove(square)
@@ -270,13 +290,13 @@ class Board:
                                             square.color_setter((255,255,0))
                                     except KeyError:
                                         pass
-                                else:
-                                    try:
-                                        for square in self.moves.computer_moves[str(self.checker.square)].values():
-                                            self.available.append(square)
-                                            square.color_setter((255,255,0))
-                                    except KeyError:
-                                        pass
+                                # else:
+                                #     try:
+                                #         for square in self.moves.computer_moves[str(self.checker.square)].values():
+                                #             self.available.append(square)
+                                #             square.color_setter((255,255,0))
+                                #     except KeyError:
+                                #         pass
                             if len(self.available) == 0:
                                 self.checker.chosen = False
                                 self.checker = None
