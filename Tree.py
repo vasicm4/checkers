@@ -88,44 +88,6 @@ class MovesTree:
 
         return self.root
 
-
-    # def generate_tree(self, moves, game, depth):
-    #     self.root = Node(moves, game)
-    #     if depth == 0:
-    #         return self.root
-    #     if not self.root.game._turn:
-    #         self.root.moves.player_moves = {}
-    #         self.root.moves.load_computer_moves(self.root.game)
-    #         for start in self.root.moves.computer_moves.keys():
-    #             for i in self.root.moves.computer_moves[start].keys():
-    #                 moves = Moves.Moves()
-    #                 move = self.root.moves.computer_moves[start][i]
-    #                 game = Game.Game(self.root.game._force_jump)
-    #                 game._checkers = self.root.game._checkers.copy()
-    #                 checker = game.checker_in_square(game.get_square(int(start[0]), start[1]))
-    #                 moves.last_move_setter(game, checker.square, move)
-    #                 game.move_checker(checker, move)
-    #                 game._turn = True
-    #                 child_node = MovesTree.generate_tree(MovesTree(), moves, game, depth - 1)
-    #                 self.root.children.append(child_node)
-    #     else:
-    #         self.root.moves.computer_moves = {}
-    #         self.root.moves.load_player_moves(self.root.game)
-    #         for start in self.root.moves.player_moves.keys():
-    #             for i in self.root.moves.player_moves[start].keys():
-    #                 moves = Moves.Moves()
-    #                 move = self.root.moves.player_moves[start][i]
-    #                 game = Game.Game(self.root.game._force_jump)
-    #                 game._checkers = self.root.game._checkers.copy()
-    #                 checker = game.checker_in_square(game.get_square(int(start[0]), start[1]))
-    #                 moves.last_move_setter(game, checker.square, move)
-    #                 game.move_checker(checker, move)
-    #                 game._turn = False
-    #                 child_node = MovesTree.generate_tree(MovesTree(), moves, game, depth - 1)
-    #                 self.root.children.append(child_node)
-    #     return self.root
-
-
     def minimax(self, depth, alpha, beta, maxPC):
         if depth == 0 or self.root.game._end:
             return self.root.moves.evaluate(self.root.game), None
@@ -157,19 +119,3 @@ class MovesTree:
             if best_move == None:
                 return minEval, None
             return minEval, best_move.moves.last_move
-
-    def depth(self, node):
-        pass
-
-    def height(self):
-        pass
-
-    def preorder(self):
-        pass
-
-    def postorder(self):
-        pass
-
-
-
-

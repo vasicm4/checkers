@@ -5,7 +5,6 @@ from Constants import *
 import Game
 import Moves
 import Tree
-import time
 
 #initialization of the game
 class Main:
@@ -208,12 +207,14 @@ class Board:
                 if checker != None:
                     if not checker.is_eaten:
                         checker.draw(board)
-
+        if self.game._end and self.moves.player_moves == {}:
+            return "won"
+        elif self.game._end and self.moves.computer_moves == {}:
+            return "lost"
         if self.game.turn:
             self.moves._computer_moves = {}
             self.moves.load_player_moves(self.game)
         if not self.game.turn:
-            start_time = time.time()
             self.tree = Tree.MovesTree()
             self.tree.generate_tree(self.moves, self.game, 3)
             evaluation, best_move = self.tree.minimax(3, float("inf"), float("-inf"), True)
@@ -224,17 +225,7 @@ class Board:
                 self.moves.last_move_setter(self.game, self.game.get_square(int(square[0]), square[1]), best_move[square])
             self.moves._computer_moves = {}
             self.moves.load_player_moves(self.game)
-            end_time = time.time()
-            print(end_time - start_time)
 
-        # if self.moves.player_moves == {} and self.game.turn:
-        #     self.game._end = True
-        # if self.moves.computer_moves == {} and not self.game.turn:
-        #     self.game._end = True
-        # if self.game._end and self.moves.player_moves == {}:
-        #     return "won"
-        # elif self.game._end and self.moves.computer_moves == {}:
-        #     return "lost"
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE and self.gameStateManager.get_state() == "board":
@@ -267,9 +258,9 @@ class Board:
                             self.checker = None
                             if self.game.turn:
                                 self.game.turn = False
-                            else:
-                                self.game.turn = True
-                            continue
+                            # else:
+                            #     self.game.turn = True
+                            break
                     if file in self.game._checkers[rank]:
                         checker = self.game._checkers[rank][file]
                         if checker == None:

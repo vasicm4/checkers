@@ -1,6 +1,7 @@
 import Game
 import Square
 from Constants import *
+import time
 
 class Moves:
     def __init__(self):
@@ -15,40 +16,55 @@ class Moves:
             for file in game._checkers[rank].keys():
                 if game.checker_in_square(game.get_square(rank,file)):
                     if game.checker_in_square(game.get_square(rank,file))._side:
-                        player_state += BASIC_PIECE
+                        player_state += PIECE
                         if game.checker_in_square(game.get_square(rank,file)).is_queen:
-                            player_state += QUEEN_WEIGHT
+                            player_state += QUEEN
+                            if rank == 4 or rank == 5:
+                                player_state += CENTER*2
                         if rank > 5:
                             player_state += ADVANCED
-                        if (file == 'a' or file == 'h') and (rank == 1 or rank == 8):
+                        if file == 'a' or file == 'h':
                             player_state += CORNER
-                        elif file == 'a' or file == 'h':
-                            player_state += WALL
+                            if rank == 1 or rank == 8:
+                                player_state += WALL
+                        if rank == 4 or rank == 5:
+                            player_state += CENTER
                     else:
-                        computer_state += BASIC_PIECE
+                        computer_state += PIECE
                         if game.checker_in_square(game.get_square(rank,file)).is_queen:
-                            computer_state += QUEEN_WEIGHT
+                            computer_state += QUEEN
+                            if rank == 4 or rank == 5:
+                                player_state += CENTER*2
                         if rank < 4:
                             computer_state += ADVANCED
-                        if (file == 'a' or file == 'h') and (rank == 1 or rank == 8):
-                            computer_state += CORNER
-                        elif file == 'a' or file == 'h':
-                            player_state += WALL
+                        if file == 'a' or file == 'h':
+                            player_state += CORNER
+                            if rank == 1 or rank == 8:
+                                player_state += WALL
+                        if rank == 4 or rank == 5:
+                            player_state += CENTER
         return player_state, computer_state
-
 
     def evaluate(self, game: Game) -> int:
         player_state, computer_state = self.count_checkers(game)
+        number_of_moves = 0
         for square in self._computer_moves.keys():
             for i in self._computer_moves[square].keys():
+                number_of_moves = i
                 if abs(self._computer_moves[square][i].rank - self._computer_moves[square][i].rank) == 2:
                     computer_state += ATTACK_WEIGHT
                     player_state += CAN_BE_CAPTURED
+            if number_of_moves > 10:
+                computer_state += AVAILABLE_MOVES
+        number_of_moves = 0
         for square in self._player_moves.keys():
             for i in self._player_moves[square].keys():
+                number_of_moves = i
                 if abs(self._player_moves[square][i].rank - self._player_moves[square][i].rank) == 2:
                     player_state += ATTACK_WEIGHT
                     player_state += CAN_BE_CAPTURED
+            if number_of_moves > 10:
+                computer_state += AVAILABLE_MOVES
         return computer_state - player_state
 
 
