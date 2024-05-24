@@ -20,29 +20,33 @@ class Moves:
                         if game.checker_in_square(game.get_square(rank,file)).is_queen:
                             player_state += QUEEN
                             if rank == 4 or rank == 5:
-                                player_state += CENTER*2
-                        if rank > 5:
-                            player_state += ADVANCED
-                        if file == 'a' or file == 'h':
-                            player_state += CORNER
-                            if rank == 1 or rank == 8:
-                                player_state += WALL
-                        if rank == 4 or rank == 5:
-                            player_state += CENTER
+                                player_state += CENTER*3
+                        else:
+                            if rank > 5:
+                                player_state += ADVANCED
+                            if file == 'a' or file == 'h':
+                                player_state += CORNER
+                                if rank == 1 or rank == 8:
+                                    player_state += WALL
+                            if rank == 4 or rank == 5:
+                                player_state += CENTER
                     else:
                         computer_state += PIECE
                         if game.checker_in_square(game.get_square(rank,file)).is_queen:
                             computer_state += QUEEN
                             if rank == 4 or rank == 5:
-                                player_state += CENTER*2
-                        if rank < 4:
-                            computer_state += ADVANCED
-                        if file == 'a' or file == 'h':
-                            player_state += CORNER
-                            if rank == 1 or rank == 8:
-                                player_state += WALL
-                        if rank == 4 or rank == 5:
-                            player_state += CENTER
+                                computer_state += CENTER*3
+                            elif rank == 1 or rank == 8:
+                                computer_state -= 10
+                        else:
+                            if rank < 4:
+                                computer_state += ADVANCED
+                            if file == 'a' or file == 'h':
+                                computer_state += CORNER
+                                if rank == 1 or rank == 8:
+                                    computer_state += WALL
+                            if rank == 4 or rank == 5:
+                                computer_state += CENTER
         return player_state, computer_state
 
     def evaluate(self, game: Game) -> int:
@@ -62,9 +66,9 @@ class Moves:
                 number_of_moves = i
                 if abs(self._player_moves[square][i].rank - self._player_moves[square][i].rank) == 2:
                     player_state += ATTACK_WEIGHT
-                    player_state += CAN_BE_CAPTURED
+                    computer_state += CAN_BE_CAPTURED
             if number_of_moves > 10:
-                computer_state += AVAILABLE_MOVES
+                player_state += AVAILABLE_MOVES
         return computer_state - player_state
 
 

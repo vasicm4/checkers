@@ -1,4 +1,5 @@
 import os.path
+import time
 
 import pygame
 from Constants import *
@@ -215,17 +216,39 @@ class Board:
             self.moves._computer_moves = {}
             self.moves.load_player_moves(self.game)
         if not self.game.turn:
+            start = time.time()
+            player_state = 0
+            computer_state = 0
+            for rank in self.game._checkers.keys():
+                for file in self.game._checkers[rank].keys():
+                    if self.game.checker_in_square(self.game.get_square(rank, file)):
+                        if self.game.checker_in_square(self.game.get_square(rank, file))._side:
+                            player_state += 1
+                        else:
+                            computer_state += 1
+            if computer_state > 10 or player_state > 10:
+                depth = 3
+            elif 8 < player_state <= 10 or 8 < computer_state <= 10 :
+                depth = 4
+            elif 4 < computer_state <= 7 or 4 < player_state <= 7:
+                depth = 5
+            else:
+                depth = 6
             self.tree = Tree.MovesTree()
-            self.tree.generate_tree(self.moves, self.game, 3)
-            evaluation, best_move = self.tree.minimax(3, float("inf"), float("-inf"), True)
+            self.tree.generate_tree(self.moves, self.game, depth)
+            evaluation, best_move = self.tree.minimax(depth, float("inf"), float("-inf"), True)
             self.game._turn = True
+            print(depth)
+            if best_move == None:
+                return "won"
             for square in best_move.keys():
                 checker = self.game.checker_in_square(self.game.get_square(int(square[0]), square[1]))
                 self.game.move_checker(checker, best_move[square])
                 self.moves.last_move_setter(self.game, self.game.get_square(int(square[0]), square[1]), best_move[square])
             self.moves._computer_moves = {}
             self.moves.load_player_moves(self.game)
-
+            end = time.time()
+            print(end - start)
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE and self.gameStateManager.get_state() == "board":
