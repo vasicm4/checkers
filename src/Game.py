@@ -1,6 +1,6 @@
 from Constants import *
-from src.model.Square import Square
-from src.model.Checker import Checker
+from model.Square import Square
+from model.Checker import Checker
 class Game:
     def __init__(self, forcejump: bool = False) -> None:
         self._force_jump = forcejump

@@ -5,7 +5,7 @@ import pygame
 from Constants import *
 import Game
 import Moves
-import src.model.Tree as Tree
+import model.Tree as Tree
 
 #initialization of the game
 class Main:
@@ -72,7 +72,7 @@ class Button:
         self.text = text
         self.color = color
         self.size = size
-        self.font = pygame.font.Font("Jersey_25" + os.path.sep + "Jersey25-Regular.ttf", self.size)
+        self.font = pygame.font.Font("src/assets/Jersey_25/Jersey25-Regular.ttf", self.size)
         self.x = x
         self.y = y
         self.clicked = False
@@ -99,9 +99,9 @@ class Menu:
     def __init__(self, display, gameStateManager, game):
         self.display = display
         self.gameStateManager = gameStateManager
-        self.welcome = pygame.font.Font("Jersey_25" + os.path.sep + "Jersey25-Regular.ttf", size=150).render("WELCOME", True,
+        self.welcome = pygame.font.Font("src/assets/Jersey_25/Jersey25-Regular.ttf", size=150).render("WELCOME", True,
                                                                                                         (0, 0, 0))
-        self.gamemode = pygame.font.Font("Jersey_25" + os.path.sep + "Jersey25-Regular.ttf", size=50).render("FORCE JUMP",
+        self.gamemode = pygame.font.Font("src/assets/Jersey_25/Jersey25-Regular.ttf", size=50).render("FORCE JUMP",
                                                                                                         True, (0, 0, 0))
 
         self.forcejump = Button(75, "YES", (0, 0, 0), 300, 500)
@@ -154,7 +154,7 @@ class Won:
 
     def run(self):
         self.display.fill((2, 122, 4))
-        won = pygame.font.Font("Jersey_25" + os.path.sep + "Jersey25-Regular.ttf", size=150).render("YOU WON", True,
+        won = pygame.font.Font("src/assets/Jersey_25/Jersey25-Regular.ttf", size=150).render("YOU WON", True,
                                                                                                         (255, 0, 0))
         self.display.blit(won, won.get_rect(center=self.display.get_rect().center, top=150))
         return_menu = Button(100, "RETURN TO MENU",(0, 0, 0), 400,500)
@@ -168,7 +168,7 @@ class Lost:
         self.game = game
     def run(self):
         self.display.fill((2, 122, 4))
-        won = pygame.font.Font("Jersey_25" + os.path.sep + "Jersey25-Regular.ttf", size=150).render("YOU LOST", True,
+        won = pygame.font.Font("src/assets/Jersey_25/Jersey25-Regular.ttf", size=150).render("YOU LOST", True,
                                                                                                         (255, 0, 0))
         self.display.blit(won, won.get_rect(center=self.display.get_rect().center, top=150))
         return_menu = Button(100, "RETURN TO MENU",(0, 0, 0), 400,500)
