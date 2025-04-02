@@ -1,5 +1,5 @@
 # ♟️ Checkers
-**♟️ Checkers** - python implementation of checkers including an implementation of intelligent checkers AI that makes strategic moves using the Minimax algorithm with Alpha-Beta pruning for optimal decision-making. This game features a real-time board graphical interface using gamepy etc refactor
+**♟️ Checkers** - A Python-based Checkers game featuring an intelligent AI that makes strategic moves using the Minimax algorithm with Alpha-Beta pruning for optimal decision-making. The game includes a real-time graphical board interface powered by Pygame, delivering an interactive and engaging experience.
 
 
 ***
