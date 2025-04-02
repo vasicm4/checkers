@@ -1,5 +1,5 @@
 import Game
-import Square
+import src.model.Square as Square
 from Constants import *
 import time
 

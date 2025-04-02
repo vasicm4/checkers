@@ -5,7 +5,7 @@ import pygame
 from Constants import *
 import Game
 import Moves
-import Tree
+import src.model.Tree as Tree
 
 #initialization of the game
 class Main:

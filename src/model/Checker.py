@@ -1,4 +1,4 @@
-from Square import *
+from src.model.Square import *
 from Constants import *
 import Moves
 class Checker:
