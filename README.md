@@ -3,7 +3,7 @@
 
 
 ***
-## 🔧 Technologies
+## Technologies
 ![Static Badge](https://img.shields.io/badge/python-3.12%2B-blue)
 ![Static Badge](https://img.shields.io/badge/library-pygame-green)
 ![Platform](https://img.shields.io/badge/Platform-Windows_|_Linux_|_MacOS-lightgrey?style=flat-square)
@@ -12,8 +12,8 @@
 ![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 
 <a name="features"><a/>
-## 🔌 Features
-#### 🧠 AI & Algorithmic Logic:
+## Features
+#### AI & Algorithmic Logic:
  - **Heuristic Evaluation** – Scores board states based on piece positions and game dynamics.
 
  - **Variable Depth Search** – Dynamically adjusts search depth for faster and smarter move selection.
@@ -24,7 +24,7 @@
 
  - **Hash Map Optimization** – Caches game states to reduce redundant computations and improve performance.
 
-#### 🎮 Gameplay & Rules:
+#### Gameplay & Rules:
 - **Standard Checkers Mechanics** – Diagonal movement and capturing via jumps over opponent pieces.
 
 - **Two Game Modes** – Choose between mandatory or optional captures.
@@ -33,12 +33,12 @@
 
 - **Multi-Jump Support** – Chain multiple captures in a single turn when available.
 
-#### ⚙️ Performance: 
+#### Performance: 
 - **Move Time Limit** – AI computes a move within 5 seconds.
 
 
 ***
-## 📋 Contents
+## Contents
 1. [Features](#features)
 2. [Dependencies](#dependencies)
 3. [Getting Started](#start)
@@ -48,7 +48,7 @@
 
 ***
 <a name="dependencies"><a/>
-## ⚒️ Dependencies
+## Dependencies
 In order to run this project properly you need to make sure that you have installed:
 1. **Python programming language - Version 3.12 and above**: you can download python [here](https://www.python.org/downloads/).
 2. **PyGame**: free and open-source cross-platform library for the development of multimedia applications like video games using Python.
@@ -57,7 +57,7 @@ In order to run this project properly you need to make sure that you have instal
 
 ***
 <a name="start"><a/>
-## 🚀 Getting Started
+## Getting Started
 
 1. **Clone the Repository**:
    
@@ -84,19 +84,19 @@ In order to run this project properly you need to make sure that you have instal
     
 ***
 <a name="functionalities"><a/>
-## 💡 Functionalities
+## Functionalities
 
 The Checkers AI game is built on standard checkers rules, with players alternating turns and moving pieces diagonally. The AI determines the optimal move using the Minimax algorithm enhanced with Alpha-Beta Pruning, while dynamically adjusting its search depth to maintain high performance.
 
-- 🛠️ **Game Initialization**
+- **Game Initialization**
   - Sets up the 8x8 board and places 12 pieces per player.
   - Offers two game rule modes: **mandatory** or **optional captures**.
 
-- 🎮 **User Turn**
+-  **User Turn**
   - Displays current board in the console with clearly marked positions.
   - Shows all **valid moves** and lets the player select one easily.
 
-- 🧠 **AI Turn**
+-  **AI Turn**
   - Runs the **Minimax algorithm** to simulate possible future states.
   - Uses **Heuristic Evaluation** to score each potential outcome.
   - Applies **Alpha-Beta Pruning** to skip unnecessary evaluations and stay efficient.
@@ -104,60 +104,60 @@ The Checkers AI game is built on standard checkers rules, with players alternati
   - Speeds up decision-making using a **Hash Map cache** of already-seen states.
   - Picks the best move within **5 seconds**
 
-- 👑 **Game Rules Logic**
+-  **Game Rules Logic**
   - Handles **king promotions**, **multi-jump sequences**, and legal movement.
   - Updates board after each move and switches turns.
 
-- 🖥️ **GUI**
+-  **GUI**
   - Redraws the board after every move.
   - Highlights moves, recent plays, and available options for the player.
   - Ensures a **smooth, clear, and intuitive** user experience.
 
-- 🏁 **Endgame Detection**
+-  **Endgame Detection**
   - Checks if a player has run out of pieces.
   - Declares the winner and ends the game.
 ---
 
-### 🧠 Core AI Algorithms Explained
+###  Core AI Algorithms Explained
 
 The AI in this Checkers game leverages the Minimax algorithm with Alpha-Beta pruning for efficient and strategic decision-making. It also incorporates variable search depth, heuristic evaluation, and hash map-based board state caching to boost performance and reduce computation time.
 
-#### 🔍 **Minimax Algorithm**
+####  **Minimax Algorithm**
 - Simulates all possible future game states by alternating player turns.
 - Assumes both players play optimally — one tries to **maximize** their advantage, the other to **minimize** it.
 - Chooses the move that leads to the **best worst-case outcome**.
 
-#### ✂️ **Alpha-Beta Pruning**
+####  **Alpha-Beta Pruning**
 - An optimization of the Minimax algorithm that skips unnecessary calculations.
 - "Prunes" parts of the search tree that won’t affect the final decision.
 - reatly reduces the number of nodes evaluated, making the AI much faster.
 
-#### 🧠 **Heuristic Evaluation**
+####  **Heuristic Evaluation**
 - Assigns a score to each board state to estimate how favorable it is.
 - Factors in things like number of pieces, king status, positioning, and control of the board.
 - Guides the AI toward smart moves even if the game isn't fully simulated.
 
-#### 🔁 **Variable Depth Search**
+####  **Variable Depth Search**
 - Adjusts how many moves ahead the AI looks, depending on the situation.
 - In simple states, it searches deeper; in complex ones, it searches shallower to stay within the time limit.
 - Balances accuracy and performance for consistent move decisions.
 
-#### 🧩 **Hash Map Optimization**
+####  **Hash Map Optimization**
 - Caches already-evaluated board states to avoid recalculating them.
 - Saves time and prevents repeating expensive computations.
 - Useful in games with recurring patterns or symmetrical positions.
 
 
-🚀 The result is an AI that plays smart, adapts to changing game scenarios, and makes consistently optimized decisions!
+ The result is an AI that plays smart, adapts to changing game scenarios, and makes consistently optimized decisions!
 
 ***
 <a name="license"><a/>
-## ⚖️ License
+## ⚖ License
 This project is licensed under the [MIT License](./LICENSE). See the [LICENSE](./LICENSE) file for details.
 
 ***
 <a name="contact"><a/>
-## ☎️ Contact me
+##  Contact me
 
  - **Email**: [vasicmaksim4@gmail.com](mailto:vasicmaksim4@gmail.com)
  - **Github**: [vasicm4](https://github.com/vasicm4)
